@@ -8,6 +8,7 @@ import { Repository, In } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Interest } from './entities/interest.entity';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { MatchingService } from 'src/matching/matching.service';
 
 @Injectable()
 export class UsersService {
