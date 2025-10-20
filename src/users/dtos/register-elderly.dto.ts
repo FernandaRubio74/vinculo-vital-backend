@@ -8,12 +8,18 @@ import {
   Matches,
   MaxLength,
   IsEnum,
+  IsArray,
+  IsInt,
+  Min,
+  Max,
+  ArrayMinSize,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender } from '../../users/entities/user.entity';
 
 export class RegisterElderlyDto {
-  // PASO 1: Datos básicos (Imagen 1)
+  // basic info
+  
   @ApiProperty({ example: 'María González' })
   @IsString()
   @IsNotEmpty({ message: 'El nombre completo es requerido' })
@@ -33,14 +39,35 @@ export class RegisterElderlyDto {
   })
   password: string;
 
-  // PASO 2: Foto (opcional)
-  @ApiProperty({ required: false })
+  // foto de perfil, puede ser opcional //falta ponerlo para almacenar imagenes
+  
+  @ApiProperty({ required: false, description: 'URL de la foto de perfil' })
   @IsOptional()
   @IsString()
   profilePhotoUrl?: string;
 
-  // PASO 3: Perfil completo (Imagen 3 - parte elderly)
-  @ApiProperty({ example: '1945-03-20' })
+  //enum de intereses, para que sea mas facil elegirlos en el frontend
+  @ApiProperty({
+    example: [1, 2, 5, 8, 12],
+    description: 'IDs de los intereses seleccionados (mínimo 1)',
+  })
+  @IsArray()
+  @ArrayMinSize(1, { message: 'Debes seleccionar al menos un interés' })
+  @IsInt({ each: true })
+  interestIds: number[];
+
+  // biografía opcional
+  @ApiProperty({
+    example: 'Me encanta cocinar platillos tradicionales y compartir historias de mi vida',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  bio?: string;
+
+  //completar el perfil
+  @ApiProperty({ example: '1950-05-15', description: 'Fecha de nacimiento (YYYY-MM-DD)' })
   @IsDateString({}, { message: 'La fecha de nacimiento debe tener formato YYYY-MM-DD' })
   birthDate: string;
 
@@ -56,24 +83,48 @@ export class RegisterElderlyDto {
   @IsEnum(Gender)
   gender?: Gender;
 
-  @ApiProperty({ example: 'San Salvador', required: false })
-  @IsOptional()
+  @ApiProperty({ example: 'San Salvador', description: 'Ciudad (OBLIGATORIO para matching)' })
   @IsString()
+  @IsNotEmpty({ message: 'La ciudad es requerida' })
   @MaxLength(100)
-  city?: string;
+  city: string;
 
-  @ApiProperty({ example: 'La Libertad', required: false })
+  @ApiProperty({ example: 'El Salvador', default: 'El Salvador' })
   @IsOptional()
   @IsString()
   @MaxLength(100)
-  state?: string;
+  country?: string;
+
+  // preferencias y datos para matching
+  
+  @ApiProperty({
+    example: 3,
+    description: 'Nivel de experiencia con tecnología (1-5)',
+    minimum: 1,
+    maximum: 5,
+    required: false,
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  techLevel?: number;
 
   @ApiProperty({
-    example: 'Me encanta cocinar y compartir historias de mi vida',
+    example: 'high',
+    enum: ['high', 'medium', 'low'],
     required: false,
   })
   @IsOptional()
   @IsString()
-  @MaxLength(500)
-  bio?: string;
+  mobilityLevel?: string;
+
+  @ApiProperty({
+    enum: Gender,
+    required: false,
+    description: 'Preferencia de género para el voluntario',
+  })
+  @IsOptional()
+  @IsEnum(Gender)
+  preferredGender?: Gender;
 }

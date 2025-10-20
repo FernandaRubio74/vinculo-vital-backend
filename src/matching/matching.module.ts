@@ -1,12 +1,19 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { MatchingController } from './matching.controller';
 import { MatchingService } from './matching.service';
+import { MatchingController } from './matching.controller';
+import { UsersModule } from '../users/users.module';
+import { ConfigModule } from '@nestjs/config';
+import { User } from 'src/users/entities/user.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [
+    UsersModule,
+    ConfigModule,
+    TypeOrmModule.forFeature([User]),
+  ],
   controllers: [MatchingController],
   providers: [MatchingService],
-  exports: [MatchingService],
+  exports: [MatchingService]
 })
 export class MatchingModule {}

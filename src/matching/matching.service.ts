@@ -1,6 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GoogleGenAI } from '@google/genai';
+import { UsersService } from '../users/users.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
 
 interface UserProfile {
   id: string;
@@ -22,15 +26,20 @@ export class MatchingService {
   private ai: GoogleGenAI;
   private model = 'gemini-2.0-flash';
 
+  
   private connectionRequests: { id: string; fromId: string; toId: string; status: string }[] = [];
 
-  constructor(private config: ConfigService) {
+  constructor(
+    private config: ConfigService,
+    private usersService: UsersService,
+    @InjectRepository(User)
+    private userRepository: Repository<User>
+  ) {
     const apiKey = this.config.get<string>('GEMINI_API_KEY');
     if (!apiKey) {
       this.logger.error('GEMINI_API_KEY no está definido en .env');
       throw new Error('Falta la variable GEMINI_API_KEY');
     }
-
     this.ai = new GoogleGenAI({ apiKey, vertexai: false });
   }
 
@@ -39,15 +48,16 @@ export class MatchingService {
 
     const candidatesForPrompt = candidates.map((c) => ({
       id: c.id,
-      age: c.age,
-      interests: c.interests,
-      shortBio: c.shortBio,
+      age: c.age ?? null,
+      interests: c.interests ?? [],
+      shortBio: c.shortBio ?? 'N/A',
     }));
 
     const prompt = `Eres un asistente que evalúa compatibilidad entre personas mayores y jóvenes voluntarios.
-Persona mayor:
-- Intereses: ${target.interests.join(', ')}
+Persona objetivo:
+- Intereses: ${target.interests?.join(', ') ?? 'N/A'}
 - Descripción: ${target.shortBio ?? 'N/A'}
+- Edad: ${target.age ?? 'N/A'}
 
 Candidatos:
 ${JSON.stringify(candidatesForPrompt, null, 2)}
@@ -73,14 +83,40 @@ Devuelve un arreglo JSON con los ${topK} mejores resultados en formato:
     }
   }
 
-  async getDailySuggestions() {
-    return [
-      { id: 'v001', name: 'Carlos', compatibility: 92, reason: 'Intereses similares en jardinería y lectura' },
-      { id: 'v002', name: 'María', compatibility: 87, reason: 'Ambos disfrutan actividades al aire libre' },
-    ];
+  // Ahora requiere userId y usa users reales de la BD
+  async getDailySuggestions(userId: string, topK = 5) {
+    const user = await this.usersService.findOne(userId);
+    if (!user) throw new NotFoundException('Usuario objetivo no encontrado');
+
+    // todos los usuarios activos (usersService.findAll ya filtra isActive)
+    const allUsers = await this.usersService.findAll();
+    const candidates = allUsers
+      .filter((c) => c.id !== userId)
+      .map((c) => ({
+        id: c.id,
+        name: (c as any).name ?? undefined,
+        interests: (c.interests ?? []).map((i: any) => i.name),
+        shortBio: (c as any).shortBio ?? undefined,
+        age: (c as any).age ?? undefined,
+      }));
+
+    const targetProfile: UserProfile = {
+      id: user.id,
+      name: (user as any).name ?? undefined,
+      interests: (user.interests ?? []).map((i: any) => i.name),
+      shortBio: (user as any).shortBio ?? undefined,
+      age: (user as any).age ?? undefined,
+    };
+
+    return this.aiMatch(targetProfile, candidates, topK);
   }
 
   async sendConnectionRequest(fromId: string, toId: string) {
+    // validar que ambos usuarios existan
+    const from = await this.usersService.findOne(fromId);
+    const to = await this.usersService.findOne(toId);
+    if (!from || !to) throw new NotFoundException('Usuario origen o destino no encontrado');
+
     const newRequest = { id: `req-${Date.now()}`, fromId, toId, status: 'pending' };
     this.connectionRequests.push(newRequest);
     return { message: 'Solicitud enviada correctamente', request: newRequest };
