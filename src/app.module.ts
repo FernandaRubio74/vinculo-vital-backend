@@ -2,10 +2,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './users/users.module'; 
+import { MatchingModule } from './matching/matching.module';
+import { ConnectionsModule } from './connections/connections.module';
 
 @Module({
   imports: [
+    MatchingModule,
     // para que las variables sean las de env
     ConfigModule.forRoot({
       isGlobal: true,
@@ -29,6 +32,7 @@ import { UsersModule } from './users/users.module';
     // Módulos de la aplicación
     AuthModule,
     UsersModule,
+    ConnectionsModule,
   ],
 })
 export class AppModule {}
