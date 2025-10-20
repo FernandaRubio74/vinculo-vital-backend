@@ -8,15 +8,15 @@ import {
 import { User } from './user.entity';
 
 export enum InterestCategory {
-  HOBBIES = 'hobbies',
-  COOKING = 'cooking',
-  CRAFTS = 'crafts',
-  STORIES = 'stories',
-  MUSIC = 'music',
-  SPORTS = 'sports',
-  TECHNOLOGY = 'technology',
-  CULTURE = 'culture',
-  OTHER = 'other',
+  HOBBIES = 'HOBBIES',
+  COOKING = 'COOKING',
+  CRAFTS = 'CRAFTS',
+  STORIES = 'STORIES',
+  MUSIC = 'MUSIC',
+  SPORTS = 'SPORTS',
+  TECHNOLOGY = 'TECHNOLOGY',
+  CULTURE = 'CULTURE',
+  OTHER = 'OTHER'
 }
 
 @Entity('interests')
