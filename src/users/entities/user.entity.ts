@@ -10,7 +10,6 @@ import {
 import { Exclude } from 'class-transformer';
 import { Interest } from './interest.entity';
 
-
 export enum UserType {
   ELDER = 'elder',
   YOUNG = 'young',
@@ -34,7 +33,7 @@ export class User {
   })
   userType: UserType;
 
-  // ============= CAMPOS COMUNES (AMBOS) =============
+  // datos generales, necesrios para ambos usuarios
   
   @Column({ length: 100 })
   fullName: string;
@@ -46,16 +45,16 @@ export class User {
   @Exclude()
   password: string;
 
+  @Column({ type: 'date' })
+  birthDate: Date;
+
+  @Column({ length: 20 })
+  phone: string;
+
+  //el perfil de cada usuario, incluyendo foto, genero, ciudad y biografia
+  
   @Column({ nullable: true })
   profilePhotoUrl: string;
-
-  // ============= CAMPOS ESPECÍFICOS DE ELDERLY =============
-  
-  @Column({ type: 'date', nullable: true })
-  birthDate: Date; // Solo elderly lo requiere en registro
-
-  @Column({ unique: true, length: 20, nullable: true })
-  phone: string; // Solo elderly lo requiere
 
   @Column({
     type: 'enum',
@@ -64,34 +63,53 @@ export class User {
   })
   gender: Gender;
 
-  @Column({ length: 100, nullable: true })
-  city: string;
+  @Column({ length: 100 })
+  city: string; // para matching por ubicación
 
-  @Column({ length: 100, nullable: true })
-  state: string; // Estado/Departamento
+  @Column({ length: 100, default: 'El Salvador' })
+  country: string;
 
   @Column({ type: 'text', nullable: true })
   bio: string;
 
-  // ============= CAMPOS ESPECÍFICOS DE YOUNG =============
+  // para personas mayores, primero cosas necearias para la experiencia y luego su perfil completo
   
-  @Column({ type: 'date', nullable: true })
-  youngBirthDate: Date; // Fecha de nacimiento del voluntario
+  // Nivel de experiencia con tecnología (para matching)
+  @Column({ type: 'int', nullable: true, default: 1 })
+  techLevel: number; // 1-5 (1=principiante, 5=avanzado)
 
-  @Column({ unique: true, length: 20, nullable: true })
-  youngPhone: string;
+  // Movilidad (para saber qué actividades puede hacer)
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  mobilityLevel: string; // 'high', 'medium', 'low'
 
+  //para los jovenes voluntarios, varios para aplicar luego las recompensas
+  
+  // Habilidades que puede enseñar/compartir
   @Column({ type: 'jsonb', nullable: true })
-  skills: string[]; // Habilidades del voluntario
+  skills: string[];
 
-  // Disponibilidad horaria
+  // Disponibilidad (CRÍTICO para matching)
   @Column({ type: 'jsonb', nullable: true })
   availability: {
     days?: string[]; // ['monday', 'wednesday', 'friday']
     timeSlots?: string[]; // ['morning', 'afternoon', 'evening']
   };
 
-  // ============= CAMPOS COMUNES =============
+  // Experiencia previa como voluntario
+  @Column({ default: false })
+  hasVolunteerExperience: boolean;
+
+  // AQUI DATOS PARA LOS MATCHINGS, EN BASE PREFERENCIAS DE CADA USUARIO
+  
+  // Preferencia de género para match (opcional, para comodidad)
+  @Column({
+    type: 'enum',
+    enum: Gender,
+    nullable: true,
+  })
+  preferredGender: Gender;
+
+  //estado del usuario
   
   @Column({ default: true })
   isActive: boolean;
@@ -103,9 +121,10 @@ export class User {
   onboardingCompleted: boolean;
 
   @Column({ default: false })
-  profileCompleted: boolean; // Si completó el perfil después del registro
+  profileCompleted: boolean;
 
-  // Estadísticas (solo para jóvenes)
+  //estadisticas de uso y recompensas para los jovenes voluntarios
+  
   @Column({ type: 'int', default: 0 })
   totalVolunteerHours: number;
 
@@ -121,8 +140,9 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  // Relación con intereses
-  @ManyToMany(() => Interest, (interest) => interest.users)
+  //relaciones para las bases de datos (intereses)
+  
+  @ManyToMany(() => Interest, (interest) => interest.users, { eager: true })
   @JoinTable({
     name: 'user_interests',
     joinColumn: { name: 'user_id', referencedColumnName: 'id' },
@@ -130,13 +150,13 @@ export class User {
   })
   interests: Interest[];
 
-  // Helper: calcular edad
+  //funciones para edad y verificaciones
+  
   getAge(): number {
-    const date = this.userType === 'elder' ? this.birthDate : this.youngBirthDate;
-    if (!date) return 0;
+    if (!this.birthDate) return 0;
 
     const today = new Date();
-    const birthDate = new Date(date);
+    const birthDate = new Date(this.birthDate);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
 
@@ -148,5 +168,16 @@ export class User {
     }
 
     return age;
+  }
+
+  // Verificar si está listo para matching
+  isReadyForMatching(): boolean {
+    return (
+      this.onboardingCompleted &&
+      this.interests &&
+      this.interests.length > 0 &&
+      this.city !== null &&
+      (this.userType === 'young' ? this.availability !== null : true)
+    );
   }
 }

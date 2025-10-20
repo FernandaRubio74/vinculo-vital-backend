@@ -6,9 +6,10 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User, UserType } from '../users/entities/user.entity';
+import { Interest } from '../users/entities/interest.entity';
 import { RegisterElderlyDto } from 'src/users/dtos/register-elderly.dto';
 import { RegisterYoungDto } from 'src/users/dtos/register-volunteer.dto';
 import { LoginDto } from 'src/users/dtos/login.dto';
@@ -19,14 +20,15 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Interest)
+    private interestsRepository: Repository<Interest>,
     private jwtService: JwtService,
   ) {}
 
-  //para optimizar el registro se divide por usuario, pero se usa el mismo entity de user. En la tabla de postgre tengo la identificaci[n del tipo de usuario]
+  //Adulto mayor - registro
 
-  //para adulto mayor
   async registerElderly(registerElderlyDto: RegisterElderlyDto) {
-    // Verificar email único
+    // 1. Verificar email único
     const existingEmail = await this.usersRepository.findOne({
       where: { email: registerElderlyDto.email },
     });
@@ -35,7 +37,7 @@ export class AuthService {
       throw new ConflictException('El email ya está registrado');
     }
 
-    //Verificat teléfono único
+    // 2. Verificar teléfono único
     const existingPhone = await this.usersRepository.findOne({
       where: { phone: registerElderlyDto.phone },
     });
@@ -44,42 +46,69 @@ export class AuthService {
       throw new ConflictException('El teléfono ya está registrado');
     }
 
-    // esto no se si lo dejamos
+    // 3. Validar edad (mínimo 60 años)
     const age = this.calculateAge(new Date(registerElderlyDto.birthDate));
-    if (age < 50) {
+    if (age < 60) {
       throw new BadRequestException(
-        'Debes tener al menos 50 años para registrarte como adulto mayor',
+        'Debes tener al menos 60 años para registrarte como adulto mayor',
       );
     }
 
-    // proteccion de la contraseña (Hash password)
+    // 4. Validar que los intereses existan
+    const interests = await this.interestsRepository.findBy({
+      id: In(registerElderlyDto.interestIds),
+      isActive: true,
+    });
+
+    if (interests.length !== registerElderlyDto.interestIds.length) {
+      throw new BadRequestException('Algunos intereses seleccionados no son válidos');
+    }
+
+    // 5. Hash password
     const hashedPassword = await bcrypt.hash(registerElderlyDto.password, 10);
 
-    // Crear usuario elderly
+    // 6. Crear usuario elderly
+    const { interestIds, ...elderlyData } = registerElderlyDto;
+
     const user = this.usersRepository.create({
+      ...elderlyData,
       userType: UserType.ELDER,
-      ...registerElderlyDto,
       password: hashedPassword,
+      interests,
+      onboardingCompleted: true, // Ya completó el onboarding al registrarse
+      profileCompleted: true,
+      country: elderlyData.country || 'El Salvador',
+      techLevel: elderlyData.techLevel || 1,
     });
 
     const savedUser = await this.usersRepository.save(user);
 
-    // Generar token
+    // 7. Generar token
     const token = this.generateToken(savedUser);
 
-    const { password, ...userWithoutPassword } = savedUser;
+    // 8. Cargar relaciones
+    const userWithRelations = await this.usersRepository.findOne({
+      where: { id: savedUser.id },
+      relations: ['interests'],
+    });
+
+    if (!userWithRelations) {
+      throw new BadRequestException('Error al cargar el usuario');
+    }
+
+    const { password, ...userWithoutPassword } = userWithRelations;
 
     return {
       user: userWithoutPassword,
       token,
-      message: 'Registro exitoso. Bienvenido a VínculoVital',
+      message: '¡Bienvenido a VínculoVital! Tu perfil está listo para conectar',
     };
   }
 
-  // registro para voluntarios
+  //Voluntario joven - Registro
 
   async registerYoung(registerYoungDto: RegisterYoungDto) {
-    // Verificar email único
+    // 1. Verificar email único
     const existingEmail = await this.usersRepository.findOne({
       where: { email: registerYoungDto.email },
     });
@@ -88,56 +117,94 @@ export class AuthService {
       throw new ConflictException('El email ya está registrado');
     }
 
-    // Verificar teléfono único
+    // 2. Verificar teléfono único
     const existingPhone = await this.usersRepository.findOne({
-      where: { youngPhone: registerYoungDto.youngPhone },
+      where: { phone: registerYoungDto.phone },
     });
 
     if (existingPhone) {
       throw new ConflictException('El teléfono ya está registrado');
     }
 
-    // Validar edad (mínimo 16 años)
-    const age = this.calculateAge(new Date(registerYoungDto.youngBirthDate));
+    // 3. Validar edad (mínimo 16 años)
+    const age = this.calculateAge(new Date(registerYoungDto.birthDate));
     if (age < 16) {
       throw new BadRequestException(
         'Debes tener al menos 16 años para ser voluntario',
       );
     }
 
-    // Hash password
+    // 4. Validar disponibilidad
+    if (
+      !registerYoungDto.availability?.days ||
+      registerYoungDto.availability.days.length === 0
+    ) {
+      throw new BadRequestException(
+        'Debes seleccionar al menos un día de disponibilidad',
+      );
+    }
+
+    if (
+      !registerYoungDto.availability?.timeSlots ||
+      registerYoungDto.availability.timeSlots.length === 0
+    ) {
+      throw new BadRequestException(
+        'Debes seleccionar al menos un horario de disponibilidad',
+      );
+    }
+
+    // 5. Validar intereses
+    const interests = await this.interestsRepository.findBy({
+      id: In(registerYoungDto.interestIds),
+      isActive: true,
+    });
+
+    if (interests.length !== registerYoungDto.interestIds.length) {
+      throw new BadRequestException('Algunos intereses seleccionados no son válidos');
+    }
+
+    // 6. Hash password
     const hashedPassword = await bcrypt.hash(registerYoungDto.password, 10);
 
-    // Crear usuario young
+    // 7. Crear usuario young
+    const { interestIds, ...youngData } = registerYoungDto;
+
     const user = this.usersRepository.create({
+      ...youngData,
       userType: UserType.YOUNG,
-      fullName: registerYoungDto.fullName,
-      email: registerYoungDto.email,
       password: hashedPassword,
-      profilePhotoUrl: registerYoungDto.profilePhotoUrl,
-      youngBirthDate: registerYoungDto.youngBirthDate,
-      youngPhone: registerYoungDto.youngPhone,
-      city: registerYoungDto.city,
-      bio: registerYoungDto.bio,
-      skills: registerYoungDto.skills,
-      availability: registerYoungDto.availability,
+      interests,
+      onboardingCompleted: true,
+      profileCompleted: true,
+      country: youngData.country || 'El Salvador',
+      hasVolunteerExperience: youngData.hasVolunteerExperience || false,
     });
 
     const savedUser = await this.usersRepository.save(user);
 
-    // Generar token
+    // 8. Generar token
     const token = this.generateToken(savedUser);
 
-    const { password, ...userWithoutPassword } = savedUser;
+    // 9. Cargar relaciones
+    const userWithRelations = await this.usersRepository.findOne({
+      where: { id: savedUser.id },
+      relations: ['interests'],
+    });
+
+    if (!userWithRelations) {
+      throw new BadRequestException('Error al cargar el usuario');
+    }
+
+    const { password, ...userWithoutPassword } = userWithRelations;
 
     return {
       user: userWithoutPassword,
       token,
-      message: '¡Bienvenido voluntario! Gracias por unirte',
+      message: '¡Bienvenido voluntario! Gracias por unirte a VínculoVital',
     };
   }
 
-  // en el login se usan los mismo datos, asi que reutilizo el dto para ambos tipos de usuario
+  //login para ambos tipos de usuario
 
   async login(loginDto: LoginDto) {
     const user = await this.usersRepository.findOne({
@@ -150,7 +217,7 @@ export class AuthService {
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedException('Usuario inactivo');
+      throw new UnauthorizedException('Usuario inactivo. Contacta soporte.');
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -169,11 +236,11 @@ export class AuthService {
     return {
       user: userWithoutPassword,
       token,
-      message: 'Login exitoso',
+      message: `¡Bienvenido de nuevo, ${user.fullName}!`,
     };
   }
 
-  //funciones para generar token y calcular edad
+  //funciones 
 
   private generateToken(user: User): string {
     const payload = {
