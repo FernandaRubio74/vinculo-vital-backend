@@ -13,17 +13,17 @@ export class ConnectionsController {
 
   @UseGuards(JwtAuthGuard)
   @Get('pending')
-  @ApiOperation({ summary: 'Get pending connections' })
+  @ApiOperation({ summary: 'Obtener conexiones pendientes del usuario' })
   async getPendingConnections(@Request() req) {
-    this.logger.debug(`Getting pending connections with auth header: ${req.headers.authorization}`);
+    this.logger.debug(`Obteniendo las conexiones pendientes con ayuda de el auth header ${req.headers.authorization}`);
     return await this.connectionsService.findPendingConnections(req.headers.authorization);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('active')
-  @ApiOperation({ summary: 'Get active connections' })
+  @ApiOperation({ summary: 'Obtener conexiones activas' })
   async getActiveConnections(@Request() req) {
-    this.logger.debug(`Getting active connections with auth header: ${req.headers.authorization}`);
+    this.logger.debug(`Obteniendo las conexiones activas con auth header: ${req.headers.authorization}`);
     return await this.connectionsService.findActiveConnections(req.headers.authorization);
   }
 }
