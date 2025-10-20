@@ -5,6 +5,7 @@ import { UsersService } from '../users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
+import { Connection, ConnectionStatus } from '../connections/entities/connection.entity';
 
 interface UserProfile {
   id: string;
@@ -33,7 +34,9 @@ export class MatchingService {
     private config: ConfigService,
     private usersService: UsersService,
     @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userRepository: Repository<User>,
+    @InjectRepository(Connection)
+    private connectionRepository: Repository<Connection>
   ) {
     const apiKey = this.config.get<string>('GEMINI_API_KEY');
     if (!apiKey) {
@@ -112,20 +115,37 @@ Devuelve un arreglo JSON con los ${topK} mejores resultados en formato:
   }
 
   async sendConnectionRequest(fromId: string, toId: string) {
-    // validar que ambos usuarios existan
     const from = await this.usersService.findOne(fromId);
     const to = await this.usersService.findOne(toId);
     if (!from || !to) throw new NotFoundException('Usuario origen o destino no encontrado');
 
-    const newRequest = { id: `req-${Date.now()}`, fromId, toId, status: 'pending' };
-    this.connectionRequests.push(newRequest);
-    return { message: 'Solicitud enviada correctamente', request: newRequest };
+    // Crear la conexión en estado PENDING
+    const isFromElder = (from.userType as unknown as string) === 'elderly';
+    const connection = this.connectionRepository.create({
+      elder: isFromElder ? from : to,
+      elderId: isFromElder ? fromId : toId,
+      young: isFromElder ? to : from,
+      youngId: isFromElder ? toId : fromId,
+      status: ConnectionStatus.PENDING,
+      initiatedBy: fromId
+    });
+
+    await this.connectionRepository.save(connection);
+    return { message: 'Solicitud enviada correctamente', connection };
   }
 
   async updateRequestStatus(requestId: string, status: 'accepted' | 'rejected') {
-    const request = this.connectionRequests.find((r) => r.id === requestId);
-    if (!request) return { message: 'Solicitud no encontrada' };
-    request.status = status;
-    return { message: `Solicitud ${status}`, request };
+    const connection = await this.connectionRepository.findOne({
+      where: { id: requestId }
+    });
+
+    if (!connection) throw new NotFoundException('Conexión no encontrada');
+
+    connection.status = status === 'accepted' ? ConnectionStatus.ACTIVE : ConnectionStatus.REJECTED;
+    connection.acceptedAt = status === 'accepted' ? new Date() : null;
+    connection.lastActivityAt = new Date();
+
+    await this.connectionRepository.save(connection);
+    return { message: `Solicitud ${status}`, connection };
   }
 }
