@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module'; 
 import { MatchingModule } from './matching/matching.module';
 import { ConnectionsModule } from './connections/connections.module';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ConnectionsModule } from './connections/connections.module';
     AuthModule,
     UsersModule,
     ConnectionsModule,
+    SessionsModule,
   ],
 })
 export class AppModule {}
