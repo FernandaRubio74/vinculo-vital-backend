@@ -5,6 +5,177 @@
   },
   "item": [
     {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Elderly",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"elderly@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Juan Pérez\",\n  \"birthDate\": \"1950-01-01\",\n  \"phone\": \"+34600000000\",\n  \"gender\": \"male\",\n  \"city\": \"Madrid\",\n  \"country\": \"España\",\n  \"bio\": \"Me gusta la jardinería y leer\",\n  \"mobilityLevel\": \"medium\",\n  \"techLevel\": \"beginner\",\n  \"interests\": [\"1\", \"2\", \"3\"]\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/register-elderly", "host": ["{{baseUrl}}"], "path": ["auth", "register-elderly"]}
+          }
+        },
+        {
+          "name": "Register Volunteer",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"volunteer@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Ana García\",\n  \"birthDate\": \"1995-01-01\",\n  \"phone\": \"+34600000001\",\n  \"gender\": \"female\",\n  \"city\": \"Barcelona\",\n  \"country\": \"España\",\n  \"bio\": \"Me encanta ayudar a los demás\",\n  \"availability\": \"weekends\",\n  \"hasVolunteerExperience\": true,\n  \"interests\": [\"1\", \"2\", \"3\"]\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/register-volunteer", "host": ["{{baseUrl}}"], "path": ["auth", "register-volunteer"]}
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"]}
+          }
+        },
+        {
+          "name": "Get User By ID",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"]}
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Nuevo Nombre\",\n  \"bio\": \"Nueva biografía\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"]}
+          }
+        },
+        {
+          "name": "Get All Interests",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{baseUrl}}/users/interests", "host": ["{{baseUrl}}"], "path": ["users", "interests"]}
+          }
+        },
+        {
+          "name": "Get Interests By Category",
+          "request": {
+            "method": "GET",
+            "url": {"raw": "{{baseUrl}}/users/interests/by-category", "host": ["{{baseUrl}}"], "path": ["users", "interests", "by-category"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Matching",
+      "item": [
+        {
+          "name": "Find Matches",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targetId\": \"{{userId}}\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/matching/find", "host": ["{{baseUrl}}"], "path": ["matching", "find"]}
+          }
+        },
+        {
+          "name": "Get Daily Suggestions",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/matching/suggestions/{{userId}}", "host": ["{{baseUrl}}"], "path": ["matching", "suggestions", "{{userId}}"]}
+          }
+        },
+        {
+          "name": "Send Connection Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Authorization", "value": "Bearer {{token}}"},
+              {"key": "Content-Type", "value": "application/json"}
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromId\": \"{{userId}}\",\n  \"toId\": \"{{targetUserId}}\"\n}"
+            },
+            "url": {"raw": "{{baseUrl}}/matching/request", "host": ["{{baseUrl}}"], "path": ["matching", "request"]}
+          }
+        },
+        {
+          "name": "Accept Match",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/matching/accept/{{connectionId}}", "host": ["{{baseUrl}}"], "path": ["matching", "accept", "{{connectionId}}"]}
+          }
+        },
+        {
+          "name": "Reject Match",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/matching/reject/{{connectionId}}", "host": ["{{baseUrl}}"], "path": ["matching", "reject", "{{connectionId}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Connections",
+      "item": [
+        {
+          "name": "Get Pending Connections",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/connections/pending", "host": ["{{baseUrl}}"], "path": ["connections", "pending"]}
+          }
+        },
+        {
+          "name": "Get Active Connections",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{baseUrl}}/connections/active", "host": ["{{baseUrl}}"], "path": ["connections", "active"]}
+          }
+        }
+      ]
+    },
+    {
       "name": "Notificaciones",
       "item": [
         {
@@ -192,9 +363,12 @@
   ],
   "variable": [
     {"key": "baseUrl", "value": "http://localhost:3000"},
-    {"key": "userId", "value": ""},
-    {"key": "rewardId", "value": ""},
-    {"key": "notificationId", "value": ""},
-    {"key": "userRewardId", "value": ""}
+    {"key": "token", "value": "your-jwt-token-here"},
+    {"key": "userId", "value": "user-id-here"},
+    {"key": "targetUserId", "value": "target-user-id-here"},
+    {"key": "connectionId", "value": "connection-id-here"},
+    {"key": "rewardId", "value": "reward-id-here"},
+    {"key": "notificationId", "value": "notification-id-here"},
+    {"key": "userRewardId", "value": "user-reward-id-here"}
   ]
 }
