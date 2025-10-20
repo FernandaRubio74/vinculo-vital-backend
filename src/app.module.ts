@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module'; 
+import { UsersModule } from './users/users.module';
 import { MatchingModule } from './matching/matching.module';
 import { ConnectionsModule } from './connections/connections.module';
+import { NotificationsModule } from './notifications/notifications.module';
+import { RewardsModule } from './rewards/rewards.module';
+import { HistoryModule } from './history/history.module';
 
 @Module({
   imports: [
@@ -33,6 +36,9 @@ import { ConnectionsModule } from './connections/connections.module';
     AuthModule,
     UsersModule,
     ConnectionsModule,
+    NotificationsModule,
+    RewardsModule,
+    HistoryModule,
   ],
 })
 export class AppModule {}

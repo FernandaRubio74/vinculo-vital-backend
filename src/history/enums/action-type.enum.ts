@@ -1,0 +1,9 @@
+export enum ActionType {
+  CALL = 'CALL',
+  REWARD = 'REWARD',
+  LOGIN = 'LOGIN',
+  LOGOUT = 'LOGOUT',
+  MATCH = 'MATCH',
+  CONNECTION = 'CONNECTION',
+  PROFILE_UPDATE = 'PROFILE_UPDATE',
+}
