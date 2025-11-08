@@ -240,6 +240,10 @@ export class AuthService {
     };
   }
 
+  logout() {
+    return { message: 'Logout exitoso' };
+  }
+
   //funciones 
 
   private generateToken(user: User): string {

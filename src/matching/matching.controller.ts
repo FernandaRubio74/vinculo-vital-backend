@@ -72,12 +72,52 @@ export class MatchingController {
   }
 
   @Get('suggestions/:userId')
-  @ApiOperation({ summary: 'Obtener sugerencias diarias de coincidencias para un usuario' })
+  @ApiOperation({
+    summary: 'Obtener sugerencias diarias de coincidencias para un usuario',
+  })
   @ApiParam({ name: 'userId', required: true, description: 'UUID del usuario' })
   @ApiResponse({ status: 200, description: 'Sugerencias generadas correctamente' })
-  async getSuggestions(@Param('userId') userId: string, @Query('topK') topK?: string) {
+  async getSuggestions(
+    @Param('userId') userId: string,
+    @Query('topK') topK?: string,
+  ) {
     const k = topK ? parseInt(topK, 10) : 5;
-    return this.matchingService.getDailySuggestions(userId, k);
+    
+    // 1. Obtiene los MatchResult de la IA (ej. [{id: '123', score: 90}, ...])
+    const matchResults = await this.matchingService.getDailySuggestions(
+      userId,
+      k,
+    );
+
+    if (!matchResults || matchResults.length === 0) {
+      return { message: 'No hay sugerencias por ahora', data: [] };
+    }
+
+    // 2. Extrae solo los IDs de los usuarios sugeridos
+    const userIds = matchResults.map((match) => match.id);
+
+    // 3. 🚨 LA SOLUCIÓN DEL BACKEND:
+    // Busca los perfiles completos de usuario usando los IDs
+    // (Necesitas añadir 'findMultipleByIds' a tu UsersService)
+    const userProfiles = await this.usersService.findMultipleByIds(userIds);
+
+    // 4. (Opcional) Combina los perfiles completos con los datos de matching (score/explanation)
+    const detailedSuggestions = userProfiles.map((profile) => {
+      const matchInfo = matchResults.find((m) => m.id === profile.id);
+      // Oculta la contraseña y otros datos sensibles
+      const { password, ...safeProfile } = profile;
+      return {
+        ...safeProfile, // El UserModel completo (sin password)
+        matchScore: matchInfo?.score ?? 0,
+        matchExplanation: matchInfo?.explanation ?? 'N/A',
+      };
+    });
+
+    // 5. Devuelve los perfiles completos
+    return {
+      message: 'Sugerencias obtenidas',
+      data: detailedSuggestions, // 👈 Ahora 'data' contiene UserModels
+    };
   }
 
   @Post('request')

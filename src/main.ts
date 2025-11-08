@@ -7,10 +7,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: '*', // en producción, especifica los dominios permitidos
+    origin: '*', // En producción, cambia esto a tu dominio
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
-
+  
   //usado para validaciones y que no se manden datos que no esten en el dto, o están malos
   app.useGlobalPipes(
     new ValidationPipe({

@@ -11,36 +11,100 @@
           "name": "Register Elderly",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"elderly@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Juan Pérez\",\n  \"birthDate\": \"1950-01-01\",\n  \"phone\": \"+34600000000\",\n  \"gender\": \"male\",\n  \"city\": \"Madrid\",\n  \"country\": \"España\",\n  \"bio\": \"Me gusta la jardinería y leer\",\n  \"mobilityLevel\": \"medium\",\n  \"techLevel\": \"beginner\",\n  \"interests\": [\"1\", \"2\", \"3\"]\n}"
             },
-            "url": {"raw": "{{baseUrl}}/auth/register-elderly", "host": ["{{baseUrl}}"], "path": ["auth", "register-elderly"]}
+            "url": {
+              "raw": "{{baseUrl}}/auth/register-elderly",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register-elderly"
+              ]
+            }
           }
         },
         {
           "name": "Register Volunteer",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"volunteer@example.com\",\n  \"password\": \"password123\",\n  \"fullName\": \"Ana García\",\n  \"birthDate\": \"1995-01-01\",\n  \"phone\": \"+34600000001\",\n  \"gender\": \"female\",\n  \"city\": \"Barcelona\",\n  \"country\": \"España\",\n  \"bio\": \"Me encanta ayudar a los demás\",\n  \"availability\": \"weekends\",\n  \"hasVolunteerExperience\": true,\n  \"interests\": [\"1\", \"2\", \"3\"]\n}"
             },
-            "url": {"raw": "{{baseUrl}}/auth/register-volunteer", "host": ["{{baseUrl}}"], "path": ["auth", "register-volunteer"]}
+            "url": {
+              "raw": "{{baseUrl}}/auth/register-volunteer",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "register-volunteer"
+              ]
+            }
           }
         },
         {
           "name": "Login",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\"\n}"
             },
-            "url": {"raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"]}
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
           }
         }
       ]
@@ -52,16 +116,43 @@
           "name": "Get All Users",
           "request": {
             "method": "GET",
-            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
-            "url": {"raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"]}
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
           }
         },
         {
           "name": "Get User By ID",
           "request": {
             "method": "GET",
-            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
-            "url": {"raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"]}
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
           }
         },
         {
@@ -69,28 +160,62 @@
           "request": {
             "method": "PUT",
             "header": [
-              {"key": "Authorization", "value": "Bearer {{token}}"},
-              {"key": "Content-Type", "value": "application/json"}
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fullName\": \"Nuevo Nombre\",\n  \"bio\": \"Nueva biografía\"\n}"
             },
-            "url": {"raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"]}
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}"
+              ]
+            }
           }
         },
         {
           "name": "Get All Interests",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/users/interests", "host": ["{{baseUrl}}"], "path": ["users", "interests"]}
+            "url": {
+              "raw": "{{baseUrl}}/users/interests",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "interests"
+              ]
+            }
           }
         },
         {
           "name": "Get Interests By Category",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/users/interests/by-category", "host": ["{{baseUrl}}"], "path": ["users", "interests", "by-category"]}
+            "url": {
+              "raw": "{{baseUrl}}/users/interests/by-category",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "interests",
+                "by-category"
+              ]
+            }
           }
         }
       ]
@@ -103,22 +228,52 @@
           "request": {
             "method": "POST",
             "header": [
-              {"key": "Authorization", "value": "Bearer {{token}}"},
-              {"key": "Content-Type", "value": "application/json"}
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"targetId\": \"{{userId}}\"\n}"
             },
-            "url": {"raw": "{{baseUrl}}/matching/find", "host": ["{{baseUrl}}"], "path": ["matching", "find"]}
+            "url": {
+              "raw": "{{baseUrl}}/matching/find",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "matching",
+                "find"
+              ]
+            }
           }
         },
         {
           "name": "Get Daily Suggestions",
           "request": {
             "method": "GET",
-            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
-            "url": {"raw": "{{baseUrl}}/matching/suggestions/{{userId}}", "host": ["{{baseUrl}}"], "path": ["matching", "suggestions", "{{userId}}"]}
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/matching/suggestions/{{userId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "matching",
+                "suggestions",
+                "{{userId}}"
+              ]
+            }
           }
         },
         {
@@ -126,30 +281,75 @@
           "request": {
             "method": "POST",
             "header": [
-              {"key": "Authorization", "value": "Bearer {{token}}"},
-              {"key": "Content-Type", "value": "application/json"}
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"fromId\": \"{{userId}}\",\n  \"toId\": \"{{targetUserId}}\"\n}"
             },
-            "url": {"raw": "{{baseUrl}}/matching/request", "host": ["{{baseUrl}}"], "path": ["matching", "request"]}
+            "url": {
+              "raw": "{{baseUrl}}/matching/request",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "matching",
+                "request"
+              ]
+            }
           }
         },
         {
           "name": "Accept Match",
           "request": {
             "method": "PUT",
-            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
-            "url": {"raw": "{{baseUrl}}/matching/accept/{{connectionId}}", "host": ["{{baseUrl}}"], "path": ["matching", "accept", "{{connectionId}}"]}
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/matching/accept/{{connectionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "matching",
+                "accept",
+                "{{connectionId}}"
+              ]
+            }
           }
         },
         {
           "name": "Reject Match",
           "request": {
             "method": "PUT",
-            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
-            "url": {"raw": "{{baseUrl}}/matching/reject/{{connectionId}}", "host": ["{{baseUrl}}"], "path": ["matching", "reject", "{{connectionId}}"]}
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/matching/reject/{{connectionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "matching",
+                "reject",
+                "{{connectionId}}"
+              ]
+            }
           }
         }
       ]
@@ -161,16 +361,44 @@
           "name": "Get Pending Connections",
           "request": {
             "method": "GET",
-            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
-            "url": {"raw": "{{baseUrl}}/connections/pending", "host": ["{{baseUrl}}"], "path": ["connections", "pending"]}
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/connections/pending",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "connections",
+                "pending"
+              ]
+            }
           }
         },
         {
           "name": "Get Active Connections",
           "request": {
             "method": "GET",
-            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
-            "url": {"raw": "{{baseUrl}}/connections/active", "host": ["{{baseUrl}}"], "path": ["connections", "active"]}
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/connections/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "connections",
+                "active"
+              ]
+            }
           }
         }
       ]
@@ -182,52 +410,132 @@
           "name": "Notificar Llamada",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"message\": \"Tienes una llamada de María García\",\n  \"caller\": \"María García\"\n}"
             },
-            "url": {"raw": "{{baseUrl}}/notifications/call", "host": ["{{baseUrl}}"], "path": ["notifications", "call"]}
+            "url": {
+              "raw": "{{baseUrl}}/notifications/call",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "call"
+              ]
+            }
           }
         },
         {
           "name": "Notificar Recompensa",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"rewardId\": \"{{rewardId}}\",\n  \"message\": \"¡Has desbloqueado: Café Premium!\"\n}"
             },
-            "url": {"raw": "{{baseUrl}}/notifications/reward", "host": ["{{baseUrl}}"], "path": ["notifications", "reward"]}
+            "url": {
+              "raw": "{{baseUrl}}/notifications/reward",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "reward"
+              ]
+            }
           }
         },
         {
           "name": "Obtener Notificaciones Usuario",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/notifications/user/{{userId}}?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["notifications", "user", "{{userId}}"], "query": [{"key": "page", "value": "1"}, {"key": "limit", "value": "10"}]}
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/{{userId}}?page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{userId}}"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Marcar Como Leída",
           "request": {
             "method": "PATCH",
-            "url": {"raw": "{{baseUrl}}/notifications/{{notificationId}}/read", "host": ["{{baseUrl}}"], "path": ["notifications", "{{notificationId}}", "read"]}
+            "url": {
+              "raw": "{{baseUrl}}/notifications/{{notificationId}}/read",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "{{notificationId}}",
+                "read"
+              ]
+            }
           }
         },
         {
           "name": "Marcar Todas Como Leídas",
           "request": {
             "method": "PATCH",
-            "url": {"raw": "{{baseUrl}}/notifications/user/{{userId}}/read-all", "host": ["{{baseUrl}}"], "path": ["notifications", "user", "{{userId}}", "read-all"]}
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/{{userId}}/read-all",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{userId}}",
+                "read-all"
+              ]
+            }
           }
         },
         {
           "name": "Contar No Leídas",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/notifications/user/{{userId}}/unread-count", "host": ["{{baseUrl}}"], "path": ["notifications", "user", "{{userId}}", "unread-count"]}
+            "url": {
+              "raw": "{{baseUrl}}/notifications/user/{{userId}}/unread-count",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "notifications",
+                "user",
+                "{{userId}}",
+                "unread-count"
+              ]
+            }
           }
         }
       ]
@@ -239,71 +547,181 @@
           "name": "Listar Recompensas",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/rewards?page=1&limit=10&activeOnly=true", "host": ["{{baseUrl}}"], "path": ["rewards"], "query": [{"key": "page", "value": "1"}, {"key": "limit", "value": "10"}, {"key": "activeOnly", "value": "true"}]}
+            "url": {
+              "raw": "{{baseUrl}}/rewards?page=1&limit=10&activeOnly=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "activeOnly",
+                  "value": "true"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Crear Recompensa",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Café Premium\",\n  \"description\": \"Un delicioso café de cortesía en nuestra cafetería\",\n  \"pointsRequired\": 100,\n  \"imageUrl\": \"https://ejemplo.com/cafe.jpg\",\n  \"isActive\": true\n}"
             },
-            "url": {"raw": "{{baseUrl}}/rewards", "host": ["{{baseUrl}}"], "path": ["rewards"]}
+            "url": {
+              "raw": "{{baseUrl}}/rewards",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards"
+              ]
+            }
           }
         },
         {
           "name": "Obtener Recompensa",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/rewards/{{rewardId}}", "host": ["{{baseUrl}}"], "path": ["rewards", "{{rewardId}}"]}
+            "url": {
+              "raw": "{{baseUrl}}/rewards/{{rewardId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                "{{rewardId}}"
+              ]
+            }
           }
         },
         {
           "name": "Actualizar Recompensa",
           "request": {
             "method": "PATCH",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Café Premium Plus\",\n  \"pointsRequired\": 150\n}"
             },
-            "url": {"raw": "{{baseUrl}}/rewards/{{rewardId}}", "host": ["{{baseUrl}}"], "path": ["rewards", "{{rewardId}}"]}
+            "url": {
+              "raw": "{{baseUrl}}/rewards/{{rewardId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                "{{rewardId}}"
+              ]
+            }
           }
         },
         {
           "name": "Asignar Recompensa",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"rewardId\": \"{{rewardId}}\",\n  \"points\": 100\n}"
             },
-            "url": {"raw": "{{baseUrl}}/rewards/assign", "host": ["{{baseUrl}}"], "path": ["rewards", "assign"]}
+            "url": {
+              "raw": "{{baseUrl}}/rewards/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                "assign"
+              ]
+            }
           }
         },
         {
           "name": "Recompensas de Usuario",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/rewards/user/{{userId}}?status=PENDING", "host": ["{{baseUrl}}"], "path": ["rewards", "user", "{{userId}}"], "query": [{"key": "status", "value": "PENDING"}]}
+            "url": {
+              "raw": "{{baseUrl}}/rewards/user/{{userId}}?status=PENDING",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                "user",
+                "{{userId}}"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Canjear Recompensa",
           "request": {
             "method": "PATCH",
-            "url": {"raw": "{{baseUrl}}/rewards/user-reward/{{userRewardId}}/redeem", "host": ["{{baseUrl}}"], "path": ["rewards", "user-reward", "{{userRewardId}}", "redeem"]}
+            "url": {
+              "raw": "{{baseUrl}}/rewards/user-reward/{{userRewardId}}/redeem",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                "user-reward",
+                "{{userRewardId}}",
+                "redeem"
+              ]
+            }
           }
         },
         {
           "name": "Estadísticas Usuario",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/rewards/user/{{userId}}/stats", "host": ["{{baseUrl}}"], "path": ["rewards", "user", "{{userId}}", "stats"]}
+            "url": {
+              "raw": "{{baseUrl}}/rewards/user/{{userId}}/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "rewards",
+                "user",
+                "{{userId}}",
+                "stats"
+              ]
+            }
           }
         }
       ]
@@ -315,60 +733,179 @@
           "name": "Registrar Acción",
           "request": {
             "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n  \"userId\": \"{{userId}}\",\n  \"actionType\": \"CALL\",\n  \"description\": \"Llamada completada con María García\",\n  \"metadata\": {\n    \"duration\": \"15:30\",\n    \"callType\": \"video\",\n    \"quality\": \"HD\"\n  }\n}"
             },
-            "url": {"raw": "{{baseUrl}}/history", "host": ["{{baseUrl}}"], "path": ["history"]}
+            "url": {
+              "raw": "{{baseUrl}}/history",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "history"
+              ]
+            }
           }
         },
         {
           "name": "Historial Completo",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/history/user/{{userId}}?page=1&limit=20", "host": ["{{baseUrl}}"], "path": ["history", "user", "{{userId}}"], "query": [{"key": "page", "value": "1"}, {"key": "limit", "value": "20"}]}
+            "url": {
+              "raw": "{{baseUrl}}/history/user/{{userId}}?page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "history",
+                "user",
+                "{{userId}}"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Filtrar por Tipo",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/history/user/{{userId}}/actions?type=CALL", "host": ["{{baseUrl}}"], "path": ["history", "user", "{{userId}}", "actions"], "query": [{"key": "type", "value": "CALL"}]}
+            "url": {
+              "raw": "{{baseUrl}}/history/user/{{userId}}/actions?type=CALL",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "history",
+                "user",
+                "{{userId}}",
+                "actions"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "CALL"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Estadísticas",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/history/user/{{userId}}/stats", "host": ["{{baseUrl}}"], "path": ["history", "user", "{{userId}}", "stats"]}
+            "url": {
+              "raw": "{{baseUrl}}/history/user/{{userId}}/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "history",
+                "user",
+                "{{userId}}",
+                "stats"
+              ]
+            }
           }
         },
         {
           "name": "Acciones Recientes",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/history/user/{{userId}}/recent?hours=24", "host": ["{{baseUrl}}"], "path": ["history", "user", "{{userId}}", "recent"], "query": [{"key": "hours", "value": "24"}]}
+            "url": {
+              "raw": "{{baseUrl}}/history/user/{{userId}}/recent?hours=24",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "history",
+                "user",
+                "{{userId}}",
+                "recent"
+              ],
+              "query": [
+                {
+                  "key": "hours",
+                  "value": "24"
+                }
+              ]
+            }
           }
         },
         {
           "name": "Contar por Tipo",
           "request": {
             "method": "GET",
-            "url": {"raw": "{{baseUrl}}/history/user/{{userId}}/action-count?type=CALL", "host": ["{{baseUrl}}"], "path": ["history", "user", "{{userId}}", "action-count"], "query": [{"key": "type", "value": "CALL"}]}
+            "url": {
+              "raw": "{{baseUrl}}/history/user/{{userId}}/action-count?type=CALL",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "history",
+                "user",
+                "{{userId}}",
+                "action-count"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "CALL"
+                }
+              ]
+            }
           }
         }
       ]
     }
   ],
   "variable": [
-    {"key": "baseUrl", "value": "http://localhost:3000"},
-    {"key": "token", "value": "your-jwt-token-here"},
-    {"key": "userId", "value": "user-id-here"},
-    {"key": "targetUserId", "value": "target-user-id-here"},
-    {"key": "connectionId", "value": "connection-id-here"},
-    {"key": "rewardId", "value": "reward-id-here"},
-    {"key": "notificationId", "value": "notification-id-here"},
-    {"key": "userRewardId", "value": "user-reward-id-here"}
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": "your-jwt-token-here"
+    },
+    {
+      "key": "userId",
+      "value": "user-id-here"
+    },
+    {
+      "key": "targetUserId",
+      "value": "target-user-id-here"
+    },
+    {
+      "key": "connectionId",
+      "value": "connection-id-here"
+    },
+    {
+      "key": "rewardId",
+      "value": "reward-id-here"
+    },
+    {
+      "key": "notificationId",
+      "value": "notification-id-here"
+    },
+    {
+      "key": "userRewardId",
+      "value": "user-reward-id-here"
+    }
   ]
 }

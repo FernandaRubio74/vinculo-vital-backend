@@ -40,4 +40,12 @@ export class AuthController {
     login(@Body() loginDto: LoginDto) {
         return this.authService.login(loginDto);
     }
+
+    @Post('logout')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Cerrar sesión' })
+    @ApiResponse({ status: 200, description: 'Logout exitoso' })
+    logout() {
+        return this.authService.logout();
+    }
 }

@@ -10,6 +10,7 @@ import { Interest } from './entities/interest.entity';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { MatchingService } from 'src/matching/matching.service';
 
+
 @Injectable()
 export class UsersService {
   constructor(
@@ -99,5 +100,19 @@ export class UsersService {
       acc[interest.category].push(interest);
       return acc;
     }, {} as Record<string, Interest[]>);
+  }
+
+  async findMultipleByIds(ids: string[]): Promise<User[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    
+    return this.usersRepository.find({
+      where: {
+        id: In(ids),
+        isActive: true, // Asegúrate de sugerir solo usuarios activos
+      },
+      relations: ['interests'], // Carga los intereses
+    });
   }
 }
